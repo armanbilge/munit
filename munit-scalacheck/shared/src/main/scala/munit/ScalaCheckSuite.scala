@@ -26,7 +26,9 @@ trait ScalaCheckSuite extends FunSuite {
   // Allow property bodies of type Unit
   // This is done to support using MUnit assertions in property bodies
   // instead of returning a Boolean.
-  implicit def unitToProp: Unit => Prop = _ => Prop.passed
+  def unitToProp: Unit => Prop = _ => Prop.passed
+  
+  implicit def unitToProp2(unit: Unit): Prop = unitToProp(unit)
 
   override def munitTestTransforms: List[TestTransform] =
     super.munitTestTransforms :+ scalaCheckPropTransform
