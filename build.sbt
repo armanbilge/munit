@@ -191,24 +191,6 @@ val sharedSettings = List(
   }
 )
 
-lazy val junit = project
-  .in(file("junit-interface"))
-  .settings(
-    mimaEnable,
-    moduleName := "junit-interface",
-    description := "A Java implementation of sbt's test interface for JUnit 4",
-    autoScalaLibrary := false,
-    crossPaths := false,
-    sbtPlugin := false,
-    crossScalaVersions := List(allScalaVersions.head),
-    libraryDependencies ++= List(
-      "junit" % "junit" % junitVersion,
-      "org.scala-sbt" % "test-interface" % "1.0"
-    ),
-    Compile / javacOptions ++= List("-target", "1.8", "-source", "1.8"),
-    Compile / doc / javacOptions --= List("-target", "1.8")
-  )
-
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
@@ -226,9 +208,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     sharedNativeSettings,
     libraryDependencies ++= List(
       "org.scala-native" %%% "test-interface" % nativeVersion
-    ),
-    Compile / unmanagedSourceDirectories +=
-      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
+    )
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(
@@ -238,17 +218,15 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         .cross(CrossVersion.for3Use2_13),
       ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
         .cross(CrossVersion.for3Use2_13)
-    ),
-    Compile / unmanagedSourceDirectories +=
-      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
+    )
   )
   .jvmSettings(
     sharedJVMSettings,
     libraryDependencies ++= List(
-      "junit" % "junit" % "4.13.1"
+      "junit" % "junit" % junitVersion,
+      "org.scala-sbt" % "test-interface" % "1.0"
     )
   )
-  .jvmConfigure(_.dependsOn(junit))
 lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
 lazy val munitNative = munit.native
